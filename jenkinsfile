@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     stages {
+
         stage('Checkout') {
             steps {
                 checkout scm
@@ -14,7 +15,7 @@ pipeline {
             }
         }
 
-        stage('Generate Email Summary') {
+        stage('Prepare Email Report') {
             steps {
                 script {
                     def json = readJSON file: 'target/cucumber-report/cucumber.json'
@@ -23,7 +24,6 @@ pipeline {
                     int passed = 0
                     int failed = 0
                     int index = 1
-
                     String tableRows = ""
 
                     json.each { feature ->
@@ -64,6 +64,27 @@ pipeline {
                     <h2>UI Automation Execution Summary</h2>
 
                     <table border="1" cellpadding="8" cellspacing="0">
+                        <tr><td><b>Job Name</b></td><td>${env.JOB_NAME}</td></tr>
+                        <tr><td><b>Build Number</b></td><td>${env.BUILD_NUMBER}</td></tr>
+                        <tr><td><b>Build Status</b></td><td>${currentBuild.currentResult}</td></tr>
+                        <tr>
+                            <td><b>Build URL</b></td>
+                            <td><a href="${env.BUILD_URL}">${env.BUILD_URL}</a></td>
+                        </tr>
+                        <tr>
+                            <td><b>Cucumber Report</b></td>
+                            <td>
+                                <a href="${env.BUILD_URL}cucumber-html-reports/overview-features.html">
+                                    View Cucumber Report
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <br/>
+
+                    <h3>Summary</h3>
+                    <table border="1" cellpadding="8" cellspacing="0">
                         <tr><td><b>Total Scenarios</b></td><td>${total}</td></tr>
                         <tr style="background-color:#d4edda;"><td><b>Passed</b></td><td>${passed}</td></tr>
                         <tr style="background-color:#f8d7da;"><td><b>Failed</b></td><td>${failed}</td></tr>
@@ -80,11 +101,6 @@ pipeline {
                         </tr>
                         ${tableRows}
                     </table>
-
-                    <br/>
-                    <a href="${env.BUILD_URL}cucumber-html-reports/overview-features.html">
-                        View Full Cucumber Report
-                    </a>
                     """
                 }
             }
