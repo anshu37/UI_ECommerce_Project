@@ -1,0 +1,82 @@
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                bat 'mvn clean test'
+            }
+        }
+
+        stage('Build Email Summary') {
+            steps {
+                script {
+                    def json = readJSON file: 'target/cucumber-report/cucumber.json'
+
+                    def html = """
+                    <h2>UI Automation Execution Summary</h2>
+                    <table border="1" cellpadding="8" cellspacing="0">
+                        <tr>
+                            <th>S.No</th>
+                            <th>Scenario</th>
+                            <th>Status</th>
+                        </tr>
+                    """
+
+                    int count = 1
+
+                    json.each { feature ->
+                        feature.elements.each { scenario ->
+                            boolean failed = false
+
+                            scenario.steps.each { step ->
+                                if (step.result.status == 'failed') {
+                                    failed = true
+                                }
+                            }
+
+                            def color = failed ? '#ffcccc' : '#ccffcc'
+                            def status = failed ? 'FAILED' : 'PASSED'
+
+                            html += """
+                            <tr style="background-color:${color}">
+                                <td>${count++}</td>
+                                <td>${scenario.name}</td>
+                                <td>${status}</td>
+                            </tr>
+                            """
+                        }
+                    }
+
+                    html += """
+                    </table>
+                    <br/>
+                    <a href="${env.BUILD_URL}cucumber-html-reports/overview-features.html">
+                        View Full Cucumber Report
+                    </a>
+                    """
+
+                    writeFile file: 'email-summary.html', text: html
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            emailext(
+                subject: "UI Automation | ${env.JOB_NAME} | Build #${env.BUILD_NUMBER} | ${currentBuild.currentResult}",
+                mimeType: 'text/html',
+                body: '${FILE,path="email-summary.html"}',
+                to: 'yourmail@gmail.com'
+            )
+        }
+    }
+}
