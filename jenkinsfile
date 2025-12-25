@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     stages {
-
         stage('Checkout') {
             steps {
                 checkout scm
@@ -15,55 +14,78 @@ pipeline {
             }
         }
 
-        stage('Build Email Summary') {
+        stage('Generate Email Summary') {
             steps {
                 script {
                     def json = readJSON file: 'target/cucumber-report/cucumber.json'
 
-                    def html = """
+                    int total = 0
+                    int passed = 0
+                    int failed = 0
+                    int index = 1
+
+                    String tableRows = ""
+
+                    json.each { feature ->
+                        feature.elements.each { scenario ->
+                            total++
+                            boolean scenarioFailed = false
+
+                            scenario.steps.each { step ->
+                                if (step.result.status == 'failed') {
+                                    scenarioFailed = true
+                                }
+                            }
+
+                            if (scenarioFailed) {
+                                failed++
+                                tableRows += """
+                                <tr style="background-color:#f8d7da;">
+                                    <td>${index}</td>
+                                    <td>${scenario.name}</td>
+                                    <td><b>FAILED</b></td>
+                                </tr>
+                                """
+                            } else {
+                                passed++
+                                tableRows += """
+                                <tr style="background-color:#d4edda;">
+                                    <td>${index}</td>
+                                    <td>${scenario.name}</td>
+                                    <td><b>PASSED</b></td>
+                                </tr>
+                                """
+                            }
+                            index++
+                        }
+                    }
+
+                    env.EMAIL_BODY = """
                     <h2>UI Automation Execution Summary</h2>
+
+                    <table border="1" cellpadding="8" cellspacing="0">
+                        <tr><td><b>Total Scenarios</b></td><td>${total}</td></tr>
+                        <tr style="background-color:#d4edda;"><td><b>Passed</b></td><td>${passed}</td></tr>
+                        <tr style="background-color:#f8d7da;"><td><b>Failed</b></td><td>${failed}</td></tr>
+                    </table>
+
+                    <br/>
+
+                    <h3>Scenario Details</h3>
                     <table border="1" cellpadding="8" cellspacing="0">
                         <tr>
                             <th>S.No</th>
                             <th>Scenario</th>
                             <th>Status</th>
                         </tr>
-                    """
-
-                    int count = 1
-
-                    json.each { feature ->
-                        feature.elements.each { scenario ->
-                            boolean failed = false
-
-                            scenario.steps.each { step ->
-                                if (step.result.status == 'failed') {
-                                    failed = true
-                                }
-                            }
-
-                            def color = failed ? '#ffcccc' : '#ccffcc'
-                            def status = failed ? 'FAILED' : 'PASSED'
-
-                            html += """
-                            <tr style="background-color:${color}">
-                                <td>${count++}</td>
-                                <td>${scenario.name}</td>
-                                <td>${status}</td>
-                            </tr>
-                            """
-                        }
-                    }
-
-                    html += """
+                        ${tableRows}
                     </table>
+
                     <br/>
                     <a href="${env.BUILD_URL}cucumber-html-reports/overview-features.html">
                         View Full Cucumber Report
                     </a>
                     """
-
-                    writeFile file: 'email-summary.html', text: html
                 }
             }
         }
@@ -73,9 +95,9 @@ pipeline {
         always {
             emailext(
                 subject: "UI Automation | ${env.JOB_NAME} | Build #${env.BUILD_NUMBER} | ${currentBuild.currentResult}",
+                body: "${env.EMAIL_BODY}",
                 mimeType: 'text/html',
-                body: '${FILE,path="email-summary.html"}',
-                to: 'yourmail@gmail.com'
+                to: 'anshu.1997mishra@gmail.com'
             )
         }
     }
