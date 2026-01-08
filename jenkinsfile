@@ -52,6 +52,7 @@ pipeline {
                             String failedStep = "NA"
                             String screenshotLink = "NA"
 
+                            // ✅ ONLY reliable way: check step results
                             scenario.steps.each { step ->
                                 if (step.result.status == 'failed') {
                                     scenarioFailed = true
@@ -94,10 +95,14 @@ pipeline {
                         }
                     }
 
+                    // ✅ Jenkins result handling
                     if (failed > 0) {
                         currentBuild.result = 'UNSTABLE'
+                    } else {
+                        currentBuild.result = 'SUCCESS'
                     }
 
+                    // ✅ Email body MUST always be set
                     env.EMAIL_BODY = """
                     <h2>UI Automation Execution Summary</h2>
 
