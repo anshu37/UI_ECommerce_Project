@@ -187,8 +187,9 @@ pipeline {
     post {
         always {
 
-            archiveArtifacts artifacts: 'reports/**',
+            archiveArtifacts artifacts: 'reports/screenshots/*.png',
                              allowEmptyArchive: true
+
 
             emailext(
                 subject: "UI Automation | ${env.JOB_NAME} | Build #${env.BUILD_NUMBER} | ${currentBuild.currentResult}",
