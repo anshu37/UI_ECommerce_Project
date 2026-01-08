@@ -91,25 +91,26 @@ pipeline {
                             if (scenarioFailed) {
                                 failed++
 
-                               // 🔍 Find actual screenshot file for this scenario (timestamped)
-                               def screenshotPrefix = scenario.name.replaceAll("[^a-zA-Z0-9]", "_")
+                              // 🔍 Find latest screenshot for this scenario (Windows)
+                              def screenshotPrefix = scenario.name.replaceAll("[^a-zA-Z0-9]", "_")
 
-                               def screenshotFiles = sh(
-                                   script: """
-                                       if exist reports\\screenshots (
-                                           dir /b reports\\screenshots | findstr /R "^${screenshotPrefix}_.*\\.png"
-                                       )
-                                   """,
-                                   returnStdout: true
-                               ).trim()
+                              def screenshotFiles = bat(
+                                  script: """
+                                      if exist reports\\screenshots (
+                                          dir /b /o-d reports\\screenshots\\${screenshotPrefix}_*.png
+                                      )
+                                  """,
+                                  returnStdout: true
+                              ).trim()
 
-                               if (screenshotFiles) {
-                                   def screenshotFile = screenshotFiles.readLines().last()
-                                   screenshotLink =
-                                       "<a href='${env.BUILD_URL}artifact/reports/screenshots/${screenshotFile}'>View</a>"
-                               } else {
-                                   screenshotLink = "NA"
-                               }
+                              if (screenshotFiles) {
+                                  def screenshotFile = screenshotFiles.readLines()[0]
+                                  screenshotLink =
+                                      "<a href='${env.BUILD_URL}artifact/reports/screenshots/${screenshotFile}'>View</a>"
+                              } else {
+                                  screenshotLink = "NA"
+                              }
+
 
                                 tableRows += """
                                 <tr style="background-color:#f8d7da;">
