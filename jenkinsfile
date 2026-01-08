@@ -140,19 +140,28 @@ pipeline {
         }
     }
 
-    post {
-        always {
+   post {
+       always {
 
-            // ✅ Archive EVERYTHING needed by reports
-            archiveArtifacts artifacts: 'reports/**',
-                             allowEmptyArchive: true
+           archiveArtifacts artifacts: 'reports/**',
+                            allowEmptyArchive: true
 
-            emailext(
-                subject: "UI Automation | ${env.JOB_NAME} | Build #${env.BUILD_NUMBER} | ${currentBuild.currentResult}",
-                body: "${env.EMAIL_BODY}",
-                mimeType: 'text/html',
-                to: 'anshu.1997mishra@gmail.com'
-            )
-        }
-    }
+           publishHTML(target: [
+               reportName: 'Cucumber Report',
+               reportDir: 'reports/cucumber-report',
+               reportFiles: 'cucumber.html',
+               keepAll: true,
+               alwaysLinkToLastBuild: true,
+               allowMissing: true
+           ])
+
+           emailext(
+               subject: "UI Automation | ${env.JOB_NAME} | Build #${env.BUILD_NUMBER} | ${currentBuild.currentResult}",
+               body: "${env.EMAIL_BODY}",
+               mimeType: 'text/html',
+               to: 'anshu.1997mishra@gmail.com'
+           )
+       }
+   }
+
 }
