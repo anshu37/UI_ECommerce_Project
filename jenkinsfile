@@ -92,24 +92,25 @@ pipeline {
                                 failed++
 
                               // 🔍 Find latest screenshot for this scenario (Windows)
-                              def screenshotPrefix = scenario.name.replaceAll("[^a-zA-Z0-9]", "_")
+                             def screenshotPrefix = scenario.name.replaceAll("[^a-zA-Z0-9]", "_")
 
-                              def screenshotFiles = bat(
-                                  script: """
-                                      if exist reports\\screenshots (
-                                          dir /b /o-d reports\\screenshots\\${screenshotPrefix}_*.png
-                                      )
-                                  """,
-                                  returnStdout: true
-                              ).trim()
+                             def screenshotFiles = bat(
+                                 script: """
+                                     @echo off
+                                     cd reports\\screenshots
+                                     dir /b /o-d ${screenshotPrefix}_*.png 2>nul
+                                 """,
+                                 returnStdout: true
+                             ).trim()
 
-                              if (screenshotFiles) {
-                                  def screenshotFile = screenshotFiles.readLines()[0]
-                                  screenshotLink =
-                                      "<a href='${env.BUILD_URL}artifact/reports/screenshots/${screenshotFile}'>View</a>"
-                              } else {
-                                  screenshotLink = "NA"
-                              }
+                             if (screenshotFiles) {
+                                 def screenshotFile = screenshotFiles.readLines()[0].trim()
+                                 screenshotLink =
+                                     "<a href='${env.BUILD_URL}artifact/reports/screenshots/${screenshotFile}'>View</a>"
+                             } else {
+                                 screenshotLink = "NA"
+                             }
+
 
 
                                 tableRows += """
