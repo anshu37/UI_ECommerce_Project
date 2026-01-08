@@ -91,11 +91,25 @@ pipeline {
                             if (scenarioFailed) {
                                 failed++
 
-                                String screenshotFile =
-                                            scenario.name.replaceAll("[^a-zA-Z0-9]", "_") + ".png"
+                               // 🔍 Find actual screenshot file for this scenario (timestamped)
+                               def screenshotPrefix = scenario.name.replaceAll("[^a-zA-Z0-9]", "_")
 
-                                    screenshotLink =
-                                    "<a href='${env.BUILD_URL}artifact/reports/screenshots/${screenshotFile}'>View</a>"
+                               def screenshotFiles = sh(
+                                   script: """
+                                       if exist reports\\screenshots (
+                                           dir /b reports\\screenshots | findstr /R "^${screenshotPrefix}_.*\\.png"
+                                       )
+                                   """,
+                                   returnStdout: true
+                               ).trim()
+
+                               if (screenshotFiles) {
+                                   def screenshotFile = screenshotFiles.readLines().last()
+                                   screenshotLink =
+                                       "<a href='${env.BUILD_URL}artifact/reports/screenshots/${screenshotFile}'>View</a>"
+                               } else {
+                                   screenshotLink = "NA"
+                               }
 
                                 tableRows += """
                                 <tr style="background-color:#f8d7da;">

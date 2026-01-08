@@ -62,19 +62,15 @@ public void afterScenario(Scenario scenario) {
 
     if (failed && driver != null) {
 
-        String screenshotPath =
-                ScreenshotUtil.captureScreenshot(driver, scenario.getName());
+        String screenshotPath = ScreenshotUtil.captureScreenshot(driver, scenario.getName());
 
-        if (screenshotPath != null) {
+        if (screenshotPath != null)
+        {
 
-            ExtentManager.getScenario()
-                    .addScreenCaptureFromPath(screenshotPath);
+            ExtentManager.getScenario().addScreenCaptureFromPath(screenshotPath);
 
             try {
-                String absolutePath =
-                        System.getProperty("user.dir")
-                                + "/reports/"
-                                + screenshotPath;
+                String absolutePath = System.getProperty("user.dir") + "/reports/" + screenshotPath;
 
                 byte[] bytes = Files.readAllBytes(Paths.get(absolutePath));
                 scenario.attach(bytes, "image/png", "Failure Screenshot");
@@ -91,9 +87,7 @@ public void afterScenario(Scenario scenario) {
     DriverFactory.quitDriver();
 
     if (BaseStep.isScenarioFailed()) {
-        throw new AssertionError(
-                "Scenario failed. Check failed steps above."
-        );
+        throw new AssertionError("Scenario failed. Check failed steps above.");
     }
 }
 
