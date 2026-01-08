@@ -15,26 +15,16 @@ pipeline {
                 bat 'mvn clean test || exit 0'
             }
         }
+
         stage('Publish Cucumber Report') {
-          steps {
-            cucumber(
-              buildStatus: 'UNSTABLE',
-              jsonReportDirectory: 'target/cucumber-report',
-              fileIncludePattern: '**/cucumber.json'
-            )
-          }
+            steps {
+                cucumber(
+                    buildStatus: 'UNSTABLE',
+                    jsonReportDirectory: 'target/cucumber-report',
+                    fileIncludePattern: '**/cucumber.json'
+                )
+            }
         }
-
-
-//         stage('Publish Cucumber Report') {
-//             steps {
-//                 cucumber(
-//                     buildStatus: 'UNSTABLE',
-//                     fileIncludePattern: '**/cucumber.json',
-//                     jsonReportDirectory: 'target/cucumber-report'
-//                 )
-//             }
-//         }
 
         stage('Prepare Email Report') {
             steps {
@@ -58,21 +48,26 @@ pipeline {
                         feature.elements.each { scenario ->
                             total++
 
-                            boolean scenarioFailed = false
+                            // ✅ ONLY source of truth for scenario result
+                            boolean scenarioFailed = scenario.result.status == 'failed'
+
                             String failedStep = "NA"
                             String screenshotLink = "NA"
 
-                            scenario.steps.each { step ->
-                                if (step.result.status == 'failed') {
-                                    scenarioFailed = true
-                                    failedStep = "${step.keyword.trim()} ${step.name}"
+                            // 🔎 Find failed step ONLY (do NOT touch status)
+                            if (scenarioFailed) {
+                                def failedStepObj =
+                                        scenario.steps.find { it.result.status == 'failed' }
+
+                                if (failedStepObj != null) {
+                                    failedStep =
+                                        "${failedStepObj.keyword.trim()} ${failedStepObj.name}"
                                 }
                             }
 
                             if (scenarioFailed) {
                                 failed++
 
-                                // ✅ ALWAYS LINK SCREENSHOT FOLDER (STABLE)
                                 screenshotLink =
                                   "<a href='${env.BUILD_URL}artifact/reports/screenshots/'>View</a>"
 
@@ -127,7 +122,6 @@ pipeline {
                               <a href="${env.BUILD_URL}cucumber-html-reports/overview-features.html">
                                   View Cucumber Report
                               </a>
-
                             </td>
                         </tr>
                     </table>
@@ -161,19 +155,17 @@ pipeline {
         }
     }
 
-   post {
-       always {
+    post {
+        always {
+            archiveArtifacts artifacts: 'reports/**',
+                             allowEmptyArchive: true
 
-           archiveArtifacts artifacts: 'reports/**',
-                            allowEmptyArchive: true
-
-           emailext(
-               subject: "UI Automation | ${env.JOB_NAME} | Build #${env.BUILD_NUMBER} | ${currentBuild.currentResult}",
-               body: "${env.EMAIL_BODY}",
-               mimeType: 'text/html',
-               to: 'anshu.1997mishra@gmail.com'
-           )
-       }
-   }
-
+            emailext(
+                subject: "UI Automation | ${env.JOB_NAME} | Build #${env.BUILD_NUMBER} | ${currentBuild.currentResult}",
+                body: "${env.EMAIL_BODY}",
+                mimeType: 'text/html',
+                to: 'anshu.1997mishra@gmail.com'
+            )
+        }
+    }
 }
