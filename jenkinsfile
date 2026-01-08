@@ -54,11 +54,14 @@ pipeline {
 
                             /* 1️⃣ Step failures */
                             scenario.steps.each { step ->
+                                lastStep = "${step.keyword.trim()} ${step.name}"
+
                                 if (step.result?.status == 'failed') {
                                     scenarioFailed = true
-                                    failedStep = "${step.keyword.trim()} ${step.name}"
+                                    failedStep = lastStep
                                 }
                             }
+
 
                             /* 2️⃣ BEFORE hook failures */
                             scenario.before?.each { hook ->
@@ -70,17 +73,21 @@ pipeline {
 
                             /* 3️⃣ AFTER hook failures */
                             scenario.after?.each { hook ->
-                                if (hook.result?.status == 'failed') {
+                                if (hook.result?.status == 'failed' && failedStep == "NA") {
                                     scenarioFailed = true
-                                    failedStep = "After hook failed"
+                                    failedStep = "After hook failed (last step: ${lastStep})"
                                 }
                             }
+
 
                             if (scenarioFailed) {
                                 failed++
 
-                                screenshotLink =
-                                  "<a href='${env.BUILD_URL}artifact/reports/screenshots/'>View</a>"
+                                String screenshotFile =
+                                            scenario.name.replaceAll("[^a-zA-Z0-9]", "_") + ".png"
+
+                                    screenshotLink =
+                                    "<a href='${env.BUILD_URL}artifact/reports/screenshots/${screenshotFile}'>View</a>"
 
                                 tableRows += """
                                 <tr style="background-color:#f8d7da;">
