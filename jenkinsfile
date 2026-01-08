@@ -56,9 +56,17 @@ pipeline {
                             scenario.steps.each { step ->
                                 lastStep = "${step.keyword.trim()} ${step.name}"
 
-                                if (step.result?.status == 'failed') {
+                                if (step.result.status == 'failed') {
                                     scenarioFailed = true
-                                    failedStep = lastStep
+
+                                    if (step.result.error_message) {
+                                        // Extract ONLY the last step name from hook failure
+                                        failedStep = step.result.error_message
+                                                .replaceAll("After hook failed \\(last step: ", "")
+                                                .replaceAll("\\)", "")
+                                    } else {
+                                        failedStep = "${step.keyword.trim()} ${step.name}"
+                                    }
                                 }
                             }
 
