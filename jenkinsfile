@@ -142,9 +142,8 @@ pipeline {
     post {
         always {
 
-            // ✅ expose cucumber html
-            archiveArtifacts artifacts: 'target/cucumber-report/**',
-                             allowEmptyArchive: true
+           archiveArtifacts artifacts: 'reports/cucumber-report/**',
+                 allowEmptyArchive: true
 
             // ✅ expose screenshots
             archiveArtifacts artifacts: 'reports/screenshots/*.png',
