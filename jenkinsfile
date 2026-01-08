@@ -11,8 +11,17 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                // Do NOT fail pipeline on test failures
                 bat 'mvn clean test || exit 0'
+            }
+        }
+
+        stage('Publish Cucumber Report') {
+            steps {
+                cucumber(
+                    buildStatus: 'UNSTABLE',
+                    fileIncludePattern: '**/cucumber.json',
+                    jsonReportDirectory: 'target/cucumber-report'
+                )
             }
         }
 
@@ -30,10 +39,7 @@ pipeline {
 
                     json.each { feature ->
 
-                        String featureFile =
-                                feature.uri.replace('\\','/')
-                                           .tokenize('/')
-                                           .last()
+                        String featureFile = feature.uri.replace('\\','/').tokenize('/').last()
 
                         feature.elements.each { scenario ->
                             total++
@@ -51,8 +57,6 @@ pipeline {
 
                             if (scenarioFailed) {
                                 failed++
-
-                                // ✅ ALWAYS LINK SCREENSHOT FOLDER (STABLE)
                                 screenshotLink =
                                   "<a href='${env.BUILD_URL}artifact/reports/screenshots/'>View</a>"
 
@@ -68,7 +72,6 @@ pipeline {
                                 """
                             } else {
                                 passed++
-
                                 tableRows += """
                                 <tr style="background-color:#d4edda;">
                                     <td>${index}</td>
@@ -85,7 +88,6 @@ pipeline {
                         }
                     }
 
-                    // ✅ Jenkins build status
                     if (failed > 0) {
                         currentBuild.result = 'UNSTABLE'
                     }
@@ -93,45 +95,14 @@ pipeline {
                     env.EMAIL_BODY = """
                     <h2>UI Automation Execution Summary</h2>
 
+                    <a href="${env.BUILD_URL}cucumber-html-reports/overview-features.html">
+                        View Cucumber Report
+                    </a>
+
+                    <br/><br/>
+
                     <table border="1" cellpadding="8" cellspacing="0">
-                        <tr><td><b>Job Name</b></td><td>${env.JOB_NAME}</td></tr>
-                        <tr><td><b>Build Number</b></td><td>${env.BUILD_NUMBER}</td></tr>
-                        <tr><td><b>Build Status</b></td><td>${currentBuild.currentResult}</td></tr>
-                        <tr>
-                            <td><b>Build URL</b></td>
-                            <td><a href="${env.BUILD_URL}">${env.BUILD_URL}</a></td>
-                        </tr>
-                        <tr>
-                            <td><b>Cucumber Report</b></td>
-                            <td>
-                               <a href="${env.BUILD_URL}artifact/reports/cucumber-report/cucumber.html">
-                                   View Cucumber Report
-                               </a>
-                            </td>
-                        </tr>
-                    </table>
-
-                    <br/>
-
-                    <h3>Summary</h3>
-                    <table border="1" cellpadding="8" cellspacing="0">
-                        <tr><td><b>Total Scenarios</b></td><td>${total}</td></tr>
-                        <tr style="background-color:#d4edda;"><td><b>Passed</b></td><td>${passed}</td></tr>
-                        <tr style="background-color:#f8d7da;"><td><b>Failed</b></td><td>${failed}</td></tr>
-                    </table>
-
-                    <br/>
-
-                    <h3>Scenario Details</h3>
-                    <table border="1" cellpadding="8" cellspacing="0">
-                        <tr>
-                            <th>S.No</th>
-                            <th>Feature File</th>
-                            <th>Scenario</th>
-                            <th>Status</th>
-                            <th>Failed Step</th>
-                            <th>Screenshot</th>
-                        </tr>
+                        <tr><th>S.No</th><th>Feature</th><th>Scenario</th><th>Status</th><th>Failed Step</th><th>Screenshot</th></tr>
                         ${tableRows}
                     </table>
                     """
@@ -140,28 +111,16 @@ pipeline {
         }
     }
 
-   post {
-       always {
+    post {
+        always {
+            archiveArtifacts artifacts: 'reports/**', allowEmptyArchive: true
 
-           archiveArtifacts artifacts: 'reports/**',
-                            allowEmptyArchive: true
-
-           publishHTML(target: [
-               reportName: 'Cucumber Report',
-               reportDir: 'reports/cucumber-report',
-               reportFiles: 'cucumber.html',
-               keepAll: true,
-               alwaysLinkToLastBuild: true,
-               allowMissing: true
-           ])
-
-           emailext(
-               subject: "UI Automation | ${env.JOB_NAME} | Build #${env.BUILD_NUMBER} | ${currentBuild.currentResult}",
-               body: "${env.EMAIL_BODY}",
-               mimeType: 'text/html',
-               to: 'anshu.1997mishra@gmail.com'
-           )
-       }
-   }
-
+            emailext(
+                subject: "UI Automation | ${env.JOB_NAME} | Build #${env.BUILD_NUMBER} | ${currentBuild.currentResult}",
+                body: "${env.EMAIL_BODY}",
+                mimeType: 'text/html',
+                to: 'anshu.1997mishra@gmail.com'
+            )
+        }
+    }
 }
