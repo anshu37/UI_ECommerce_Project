@@ -1,0 +1,107 @@
+2026-01-07 12:43:03 INFO  org.testng.internal.Utils - [TestNG] Running:
+  C:\Users\anshu\AppData\Local\JetBrains\IdeaIC2024.3\temp-testng-customsuite.xml
+
+2026-01-07 12:43:04 INFO  hooks.Hooks - Starting Scenario Now
+2026-01-07 12:43:12 INFO  hooks.Hooks - Starting Scenario Now
+2026-01-07 12:43:18 INFO  hooks.Hooks - Starting Scenario Now
+2026-01-07 19:10:30 INFO  org.testng.internal.Utils - [TestNG] Running:
+  C:\Users\anshu\AppData\Local\JetBrains\IdeaIC2024.3\temp-testng-customsuite.xml
+
+2026-01-07 19:10:30 INFO  hooks.Hooks - Starting Execution Now
+2026-01-07 19:17:06 INFO  org.testng.internal.Utils - [TestNG] Running:
+  C:\Users\anshu\AppData\Local\JetBrains\IdeaIC2024.3\temp-testng-customsuite.xml
+
+2026-01-07 19:17:07 INFO  hooks.Hooks - Starting Execution Now
+2026-01-07 19:21:59 INFO  org.testng.internal.Utils - [TestNG] Running:
+  C:\Users\anshu\AppData\Local\JetBrains\IdeaIC2024.3\temp-testng-customsuite.xml
+
+2026-01-07 19:22:00 INFO  hooks.Hooks - Starting Execution Now
+2026-01-07 19:24:31 INFO  org.testng.internal.Utils - [TestNG] Running:
+  C:\Users\anshu\AppData\Local\JetBrains\IdeaIC2024.3\temp-testng-customsuite.xml
+
+2026-01-07 19:24:32 INFO  hooks.Hooks - Starting Execution Now
+2026-01-07 19:40:09 INFO  org.testng.internal.Utils - [TestNG] Running:
+  C:\Users\anshu\AppData\Local\JetBrains\IdeaIC2024.3\temp-testng-customsuite.xml
+
+2026-01-07 19:40:10 INFO  hooks.Hooks - Starting Execution Now
+2026-01-07 19:41:27 INFO  org.testng.internal.Utils - [TestNG] Running:
+  C:\Users\anshu\AppData\Local\JetBrains\IdeaIC2024.3\temp-testng-customsuite.xml
+
+2026-01-07 19:41:28 INFO  hooks.Hooks - Starting Execution Now
+2026-01-07 19:44:03 INFO  org.testng.internal.Utils - [TestNG] Running:
+  C:\Users\anshu\AppData\Local\JetBrains\IdeaIC2024.3\temp-testng-customsuite.xml
+
+2026-01-07 19:44:04 INFO  hooks.Hooks - Starting Execution Now
+2026-01-07 19:47:41 INFO  org.testng.internal.Utils - [TestNG] Running:
+  C:\Users\anshu\AppData\Local\JetBrains\IdeaIC2024.3\temp-testng-customsuite.xml
+
+2026-01-07 19:47:41 INFO  hooks.Hooks - Starting Execution Now
+2026-01-07 19:47:44 INFO  hooks.Hooks - Driver in After hook = ChromeDriver: chrome on windows (4bb4074f76d9923a84fc59ae03c0258c)
+2026-01-07 19:51:39 INFO  org.testng.internal.Utils - [TestNG] Running:
+  C:\Users\anshu\AppData\Local\JetBrains\IdeaIC2024.3\temp-testng-customsuite.xml
+
+2026-01-07 19:51:39 INFO  hooks.Hooks - Starting Execution Now
+2026-01-07 19:51:42 INFO  hooks.Hooks - Driver in After hook = ChromeDriver: chrome on windows (374140309c72a5e390b046e0d602b44c)
+2026-01-07 19:52:59 INFO  org.testng.internal.Utils - [TestNG] Running:
+  C:\Users\anshu\AppData\Local\JetBrains\IdeaIC2024.3\temp-testng-customsuite.xml
+
+2026-01-07 19:53:00 INFO  hooks.Hooks - Starting Execution Now
+2026-01-07 19:53:03 INFO  hooks.Hooks - Driver in After hook = ChromeDriver: chrome on windows (67a0f77c8507c680f0f593565632d19d)
+2026-01-07 19:55:07 INFO  org.testng.internal.Utils - [TestNG] Running:
+  C:\Users\anshu\AppData\Local\JetBrains\IdeaIC2024.3\temp-testng-customsuite.xml
+
+2026-01-07 19:55:08 INFO  hooks.Hooks - Starting Execution Now
+2026-01-07 19:57:58 INFO  org.testng.internal.Utils - [TestNG] Running:
+  C:\Users\anshu\AppData\Local\JetBrains\IdeaIC2024.3\temp-testng-customsuite.xml
+
+2026-01-07 19:57:59 INFO  hooks.Hooks - Starting Execution Now
+2026-01-07 20:01:35 INFO  org.testng.internal.Utils - [TestNG] Running:
+  C:\Users\anshu\AppData\Local\JetBrains\IdeaIC2024.3\temp-testng-customsuite.xml
+
+2026-01-07 20:01:36 INFO  hooks.Hooks - Starting Execution Now
+2026-01-07 20:01:39 INFO  hooks.Hooks - Driver in After hook = ChromeDriver: chrome on windows (a4b6d4ba35462b493abecdc5e4a5683f)
+2026-01-07 20:09:46 INFO  org.testng.internal.Utils - [TestNG] Running:
+  C:\Users\anshu\AppData\Local\JetBrains\IdeaIC2024.3\temp-testng-customsuite.xml
+
+2026-01-07 20:09:46 INFO  hooks.Hooks - Starting Execution Now
+2026-01-07 20:11:25 INFO  org.testng.internal.Utils - [TestNG] Running:
+  C:\Users\anshu\AppData\Local\JetBrains\IdeaIC2024.3\temp-testng-customsuite.xml
+
+2026-01-07 20:11:25 INFO  hooks.Hooks - Starting Execution Now
+2026-01-07 20:15:56 INFO  org.testng.internal.Utils - [TestNG] Running:
+  C:\Users\anshu\AppData\Local\JetBrains\IdeaIC2024.3\temp-testng-customsuite.xml
+
+2026-01-07 20:15:56 INFO  hooks.Hooks - Starting Execution Now
+2026-01-07 20:19:16 INFO  org.testng.internal.Utils - [TestNG] Running:
+  C:\Users\anshu\AppData\Local\JetBrains\IdeaIC2024.3\temp-testng-customsuite.xml
+
+2026-01-07 20:19:17 INFO  hooks.Hooks - Starting Execution Now
+2026-01-07 20:23:54 INFO  org.testng.internal.Utils - [TestNG] Running:
+  C:\Users\anshu\AppData\Local\JetBrains\IdeaIC2024.3\temp-testng-customsuite.xml
+
+2026-01-07 20:23:54 INFO  hooks.Hooks - Starting Execution Now
+2026-01-07 20:23:57 INFO  hooks.Hooks - Driver in After hook = ChromeDriver: chrome on windows (8371feffaa2ff63a4af182bc07dd3ec8)
+2026-01-07 20:27:25 INFO  org.testng.internal.Utils - [TestNG] Running:
+  C:\Users\anshu\AppData\Local\JetBrains\IdeaIC2024.3\temp-testng-customsuite.xml
+
+2026-01-07 20:27:25 INFO  hooks.Hooks - Starting Execution Now
+2026-01-07 20:47:19 INFO  org.testng.internal.Utils - [TestNG] Running:
+  C:\Users\anshu\AppData\Local\JetBrains\IdeaIC2024.3\temp-testng-customsuite.xml
+
+2026-01-07 20:47:20 INFO  hooks.Hooks - Starting Execution Now
+2026-01-07 20:50:25 INFO  org.testng.internal.Utils - [TestNG] Running:
+  C:\Users\anshu\AppData\Local\JetBrains\IdeaIC2024.3\temp-testng-customsuite.xml
+
+2026-01-07 20:50:25 INFO  hooks.Hooks - Starting Execution Now
+2026-01-07 20:55:36 INFO  org.testng.internal.Utils - [TestNG] Running:
+  C:\Users\anshu\AppData\Local\JetBrains\IdeaIC2024.3\temp-testng-customsuite.xml
+
+2026-01-07 20:55:37 INFO  hooks.Hooks - Starting Execution Now
+2026-01-07 20:59:01 INFO  org.testng.internal.Utils - [TestNG] Running:
+  C:\Users\anshu\AppData\Local\JetBrains\IdeaIC2024.3\temp-testng-customsuite.xml
+
+2026-01-07 20:59:01 INFO  hooks.Hooks - Starting Execution Now
+2026-01-07 21:03:11 INFO  org.testng.internal.Utils - [TestNG] Running:
+  C:\Users\anshu\AppData\Local\JetBrains\IdeaIC2024.3\temp-testng-customsuite.xml
+
+2026-01-07 21:03:11 INFO  hooks.Hooks - Starting Execution Now

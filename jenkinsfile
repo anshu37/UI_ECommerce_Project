@@ -18,6 +18,7 @@ pipeline {
         stage('Prepare Email Report') {
             steps {
                 script {
+
                     def json = readJSON file: 'target/cucumber-report/cucumber.json'
 
                     int total = 0
@@ -27,37 +28,64 @@ pipeline {
                     String tableRows = ""
 
                     json.each { feature ->
+
+                        String featureFile =
+                                feature.uri.replace('\\','/')
+                                           .tokenize('/')
+                                           .last()
+
                         feature.elements.each { scenario ->
                             total++
+
                             boolean scenarioFailed = false
+                            String failedStep = "NA"
+                            String screenshotLink = "NA"
 
                             scenario.steps.each { step ->
                                 if (step.result.status == 'failed') {
                                     scenarioFailed = true
+                                    failedStep = step.keyword + step.name
                                 }
                             }
 
                             if (scenarioFailed) {
                                 failed++
+
+                                screenshotLink =
+                                  "<a href='${env.BUILD_URL}artifact/reports/screenshots/'>View</a>"
+
                                 tableRows += """
                                 <tr style="background-color:#f8d7da;">
                                     <td>${index}</td>
                                     <td>${scenario.name}</td>
                                     <td><b>FAILED</b></td>
+                                    <td>${featureFile}</td>
+                                    <td>${failedStep}</td>
+                                    <td>${screenshotLink}</td>
                                 </tr>
                                 """
                             } else {
                                 passed++
+
                                 tableRows += """
                                 <tr style="background-color:#d4edda;">
                                     <td>${index}</td>
                                     <td>${scenario.name}</td>
                                     <td><b>PASSED</b></td>
+                                    <td>${featureFile}</td>
+                                    <td>NA</td>
+                                    <td>NA</td>
                                 </tr>
                                 """
                             }
+
                             index++
                         }
+                    }
+
+                    // 🔴 IMPORTANT: mark build unstable if any failure
+                    if (failed > 0) {
+                        currentBuild.result = 'UNSTABLE'
                     }
 
                     env.EMAIL_BODY = """
@@ -74,7 +102,7 @@ pipeline {
                         <tr>
                             <td><b>Cucumber Report</b></td>
                             <td>
-                                <a href="${env.BUILD_URL}cucumber-html-reports/overview-features.html">
+                                <a href="${env.BUILD_URL}artifact/target/cucumber-report/overview-features.html">
                                     View Cucumber Report
                                 </a>
                             </td>
@@ -98,6 +126,9 @@ pipeline {
                             <th>S.No</th>
                             <th>Scenario</th>
                             <th>Status</th>
+                            <th>Feature File</th>
+                            <th>Failed Step</th>
+                            <th>Screenshot</th>
                         </tr>
                         ${tableRows}
                     </table>
@@ -109,6 +140,15 @@ pipeline {
 
     post {
         always {
+
+            // ✅ expose cucumber html
+            archiveArtifacts artifacts: 'target/cucumber-report/**',
+                             allowEmptyArchive: true
+
+            // ✅ expose screenshots
+            archiveArtifacts artifacts: 'reports/screenshots/*.png',
+                             allowEmptyArchive: true
+
             emailext(
                 subject: "UI Automation | ${env.JOB_NAME} | Build #${env.BUILD_NUMBER} | ${currentBuild.currentResult}",
                 body: "${env.EMAIL_BODY}",
