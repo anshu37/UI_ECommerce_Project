@@ -52,11 +52,27 @@ pipeline {
                             String failedStep = "NA"
                             String screenshotLink = "NA"
 
-                            // ✅ ONLY reliable way: check step results
+                            /* 1️⃣ Step failures */
                             scenario.steps.each { step ->
-                                if (step.result.status == 'failed') {
+                                if (step.result?.status == 'failed') {
                                     scenarioFailed = true
                                     failedStep = "${step.keyword.trim()} ${step.name}"
+                                }
+                            }
+
+                            /* 2️⃣ BEFORE hook failures */
+                            scenario.before?.each { hook ->
+                                if (hook.result?.status == 'failed') {
+                                    scenarioFailed = true
+                                    failedStep = "Before hook failed"
+                                }
+                            }
+
+                            /* 3️⃣ AFTER hook failures */
+                            scenario.after?.each { hook ->
+                                if (hook.result?.status == 'failed') {
+                                    scenarioFailed = true
+                                    failedStep = "After hook failed"
                                 }
                             }
 
