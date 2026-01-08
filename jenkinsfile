@@ -102,9 +102,10 @@ pipeline {
                         <tr>
                             <td><b>Cucumber Report</b></td>
                             <td>
-                                <a href="${env.BUILD_URL}artifact/target/cucumber-report/overview-features.html">
-                                    View Cucumber Report
-                                </a>
+                               <a href="${env.BUILD_URL}artifact/reports/cucumber-report/cucumber.html">
+                                   View Cucumber Report
+                               </a>
+
                             </td>
                         </tr>
                     </table>
