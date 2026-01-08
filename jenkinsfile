@@ -11,6 +11,7 @@ pipeline {
 
         stage('Run Tests') {
             steps {
+                // Do NOT fail pipeline on test failures
                 bat 'mvn clean test || exit 0'
             }
         }
@@ -44,22 +45,23 @@ pipeline {
                             scenario.steps.each { step ->
                                 if (step.result.status == 'failed') {
                                     scenarioFailed = true
-                                    failedStep = step.keyword + step.name
+                                    failedStep = "${step.keyword.trim()} ${step.name}"
                                 }
                             }
 
                             if (scenarioFailed) {
                                 failed++
 
+                                // ✅ ALWAYS LINK SCREENSHOT FOLDER (STABLE)
                                 screenshotLink =
                                   "<a href='${env.BUILD_URL}artifact/reports/screenshots/'>View</a>"
 
                                 tableRows += """
                                 <tr style="background-color:#f8d7da;">
                                     <td>${index}</td>
+                                    <td>${featureFile}</td>
                                     <td>${scenario.name}</td>
                                     <td><b>FAILED</b></td>
-                                    <td>${featureFile}</td>
                                     <td>${failedStep}</td>
                                     <td>${screenshotLink}</td>
                                 </tr>
@@ -70,9 +72,9 @@ pipeline {
                                 tableRows += """
                                 <tr style="background-color:#d4edda;">
                                     <td>${index}</td>
+                                    <td>${featureFile}</td>
                                     <td>${scenario.name}</td>
                                     <td><b>PASSED</b></td>
-                                    <td>${featureFile}</td>
                                     <td>NA</td>
                                     <td>NA</td>
                                 </tr>
@@ -83,7 +85,7 @@ pipeline {
                         }
                     }
 
-                    // 🔴 IMPORTANT: mark build unstable if any failure
+                    // ✅ Jenkins build status
                     if (failed > 0) {
                         currentBuild.result = 'UNSTABLE'
                     }
@@ -105,7 +107,6 @@ pipeline {
                                <a href="${env.BUILD_URL}artifact/reports/cucumber-report/cucumber.html">
                                    View Cucumber Report
                                </a>
-
                             </td>
                         </tr>
                     </table>
@@ -125,9 +126,9 @@ pipeline {
                     <table border="1" cellpadding="8" cellspacing="0">
                         <tr>
                             <th>S.No</th>
+                            <th>Feature File</th>
                             <th>Scenario</th>
                             <th>Status</th>
-                            <th>Feature File</th>
                             <th>Failed Step</th>
                             <th>Screenshot</th>
                         </tr>
@@ -142,12 +143,8 @@ pipeline {
     post {
         always {
 
-            // ✅ Archive FULL cucumber report (HTML + JS + CSS)
+            // ✅ Archive EVERYTHING needed by reports
             archiveArtifacts artifacts: 'reports/**',
-                             allowEmptyArchive: true
-
-            // ✅ Archive screenshots
-            archiveArtifacts artifacts: 'reports/screenshots/*.png',
                              allowEmptyArchive: true
 
             emailext(
@@ -158,5 +155,4 @@ pipeline {
             )
         }
     }
-
 }
