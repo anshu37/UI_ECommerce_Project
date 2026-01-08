@@ -19,7 +19,7 @@ pipeline {
         stage('Publish Cucumber Report') {
             steps {
                 cucumber(
-                    buildStatus: 'UNSTABLE',
+                    buildStatus: 'FAILURE',
                     jsonReportDirectory: 'target/cucumber-report',
                     fileIncludePattern: '**/cucumber.json'
                 )
@@ -144,7 +144,7 @@ pipeline {
 
                     // ✅ Jenkins result handling
                     if (failed > 0) {
-                        currentBuild.result = 'UNSTABLE'
+                        currentBuild.result = 'FAILURE'
                     } else {
                         currentBuild.result = 'SUCCESS'
                     }
