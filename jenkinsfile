@@ -15,17 +15,26 @@ pipeline {
                 bat 'mvn clean test || exit 0'
             }
         }
-
-
         stage('Publish Cucumber Report') {
-            steps {
-                cucumber(
-                    buildStatus: 'UNSTABLE',
-                    fileIncludePattern: '**/cucumber.json',
-                    jsonReportDirectory: 'target/cucumber-report'
-                )
-            }
+          steps {
+            cucumber(
+              buildStatus: 'UNSTABLE',
+              jsonReportDirectory: 'target/cucumber-report',
+              fileIncludePattern: '**/cucumber.json'
+            )
+          }
         }
+
+
+//         stage('Publish Cucumber Report') {
+//             steps {
+//                 cucumber(
+//                     buildStatus: 'UNSTABLE',
+//                     fileIncludePattern: '**/cucumber.json',
+//                     jsonReportDirectory: 'target/cucumber-report'
+//                 )
+//             }
+//         }
 
         stage('Prepare Email Report') {
             steps {
